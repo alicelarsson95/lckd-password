@@ -1,20 +1,85 @@
 name: Deploy main
 
 on:
-  push:
+  pull_request:
     branches: [main]
-    pull_request:
-      branches: [main]
-      types: [closed]
+    types: [closed]
+    paths:
+      - "frontend/**"
+      - "backend/**"
+      - ".github/workflows/deploy-main.yml"
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: eu-north-1   
+  S3_BUCKET_NAME: lckd-password-main
 
 jobs:
-  deploy:
+  fe-main:
+    name: FE build & deploy (main)
     if: > 
       github.event.pull_request.merged == true &&
       github.event.pull_request.base.ref == 'main' &&
       github.event.pull_request.head.ref == 'dev'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - run: npm ci
+      - run: npm run build
 
-# - name: Deploying to Cloudfront
-#        uses: jakejarvis/s3-sync-action@master
-#        with:
-#          args: --follow-symlinks
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+      
+      - name: Sync to S3 (prod)
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete --follow-symlinks
+        env:
+          AWS_S3_BUCKET: ${{ env.S3_BUCKET_NAME }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+          SOURCE_DIR: './frontend/dist'
+
+  be-main:
+    name: BE docker build & push (main)
+    if: > 
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.head.ref == 'dev'
+    runs-on: ubuntu-latest
+    needs: fe-main
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4 
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build image
+        run: |
+          IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/lckd-backend"
+          TAG="main-${{ github.sha }}"
+          docker build -t $IMAGE:$TAG .
+          docker tag $IMAGE:$TAG $IMAGE:latest
+
+      - name: Push image
+        run: |
+          IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/lckd-backend"
+          TAG="main-${{ github.sha }}"
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
