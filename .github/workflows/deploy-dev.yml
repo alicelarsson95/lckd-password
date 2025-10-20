@@ -1,0 +1,6 @@
+
+
+# - name: Deploying to Cloudfront
+#        uses: jakejarvis/s3-sync-action@master
+#        with:
+#          args: --follow-symlinks
