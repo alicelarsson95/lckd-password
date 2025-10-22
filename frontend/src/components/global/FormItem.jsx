@@ -1,11 +1,16 @@
 function FormItem({ label, type = "text" }) {
   return (
     <div className="flex flex-col w-full">
-      <label className="text-white text-sm font-medium mb-1">{label}</label>
-      <input
-        type={type}
-        className="w-full rounded-lg py-2 px-3 bg-[#1a1442] text-white focus:outline-none focus:ring-2 focus:ring-white"
-      />
+      <div className="relative">
+   
+        <label className="absolute -top-5 bg-[#fbbf24] text-[#0b0742] text-sm font-semibold px-4 rounded-t">
+          {label}
+        </label>
+        <input
+          type={type}
+          className="w-full rounded-b-md text-s rounded-tr-md py-4 px-2 border border-[#fbbf24]"
+        />
+      </div>
     </div>
   );
 }
