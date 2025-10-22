@@ -20,13 +20,13 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         {/* <Route path="/" element={<Layout><Login /></Layout>} /> */}
-       {/*  <Route path="/signup" element={<Layout><Signup /></Layout>} /> */}
+        {/*  <Route path="/signup" element={<Layout><Signup /></Layout>} /> */}
         {/* <Route path="/vault" element={<Layout><ViewPasswords /></Layout>} /> */}
         {/* <Route path="/vault/new" element={<Layout><CreatePassword /></Layout>} /> */}
-       {/*  <Route path="/vault/:id/edit" element={<Layout><EditDeletePassword /></Layout>} /> */}
+        {/*  <Route path="/vault/:id/edit" element={<Layout><EditDeletePassword /></Layout>} /> */}
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
 
 export default App;
