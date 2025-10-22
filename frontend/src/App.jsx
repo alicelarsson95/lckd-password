@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-/* import Login from "./pages/Login.jsx"; */
+/* import Login from "./pages/Login.jsx"; 
 /* import CreatePassword from "./pages/CreatePassword.jsx"; */
 /* import Signup from "./pages/Signup"; */
 /* import ViewPasswords from "./pages/ViewPasswords.jsx"; */
@@ -20,13 +20,13 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         {/* <Route path="/" element={<Layout><Login /></Layout>} /> */}
-       {/*  <Route path="/signup" element={<Layout><Signup /></Layout>} /> */}
+        {/*  <Route path="/signup" element={<Layout><Signup /></Layout>} /> */}
         {/* <Route path="/vault" element={<Layout><ViewPasswords /></Layout>} /> */}
         {/* <Route path="/vault/new" element={<Layout><CreatePassword /></Layout>} /> */}
-       {/*  <Route path="/vault/:id/edit" element={<Layout><EditDeletePassword /></Layout>} /> */}
+        {/*  <Route path="/vault/:id/edit" element={<Layout><EditDeletePassword /></Layout>} /> */}
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
 
 export default App;
